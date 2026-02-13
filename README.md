@@ -1,155 +1,185 @@
+
 # 📚 AI-SmartLearn
 
-### Personalized AI-Powered Learning & Smart Reminder System
+### AI-Powered Personalized Learning & Smart Reminder System
 
-AI-SmartLearn is an intelligent learning assistant that generates **personalized study plans**, adapts to user progress, and sends **smart reminders** to ensure timely task completion.
+AI-SmartLearn is an intelligent learning assistant that generates **tailored study plans**, adapts to user performance, and sends **smart reminders** to help users achieve their goals efficiently.
 
-The system uses AI APIs to tailor learning schedules based on user goals, availability, strengths, weaknesses, and deadlines.
+The system uses AI APIs and **Supabase** to deliver personalized scheduling, adaptive task management, and real-time notifications.
 
 ---
 
-## 🚀 Features
+## 🚀 Key Features
 
-### 🎯 Personalized Study Planning
+### 🎯 Personalized Study Plans
 
-* Custom study plans based on:
+* Generates custom study plans based on:
 
   * User schedule
   * Subject / Skill
   * Daily available time
-  * Target exam or goal date
-  * Skill level (Beginner / Intermediate / Advanced)
+  * Target exam date
+  * Skill level
+  * Strengths & weaknesses
 
-### 🧠 AI-Powered Task Generation
+### 🧠 AI-Powered Task Breakdown
 
-* Breaks large goals into micro-tasks
-* Allocates realistic time blocks
-* Suggests revision schedules
-* Adjusts difficulty dynamically
+* Converts large goals into micro-tasks
+* Allocates optimal time blocks
+* Adds revision cycles automatically
+* Adjusts plan dynamically based on progress
 
 ### 🔔 Smart Reminder System
 
-* Automated notifications
+* Automated daily reminders
 * Adaptive rescheduling for missed tasks
-* Urgency escalation near deadlines
-* Daily task summaries
+* Deadline-based urgency escalation
+* Telegram / Email / Web notifications
 
-### 📊 Progress Tracking
+### 📊 Progress Analytics
 
-* Completion analytics
-* Weekly performance reports
+* Completion rate tracking
+* Weekly performance summaries
 * Streak tracking
-* Weak area identification
-
-### 💬 Optional Integrations
-
-* Email reminders
-* Telegram Bot notifications
-* Web push notifications
+* Weak area detection
 
 ---
 
-## 🏗️ Tech Stack
+# 🏗️ Tech Stack
 
-### Frontend
+## 🖥️ Frontend
 
 * React.js
 * Tailwind CSS
-* Recharts (for analytics)
+* Recharts (Analytics Dashboard)
 
-### Backend
+## 🔙 Backend
 
 * FastAPI
-* PostgreSQL
-* Redis (for scheduling & background jobs)
+* APScheduler / Celery (Background jobs)
 
-### AI Integration
+## 🗄️ Database
 
-* OpenAI / Gemini API
-* Prompt-engineered personalization engine
+* **Supabase**
 
-### Notifications
+  * PostgreSQL (Primary Database)
+  * Supabase Auth (Authentication)
+  * Supabase Realtime (Live updates)
+  * Supabase Storage (Optional future feature)
 
-* APScheduler / Celery
+## 🧠 AI Integration
+
+* OpenAI API / Gemini API
+
+## 🔔 Notifications
+
 * Email (SMTP / SendGrid)
 * Telegram Bot API
+* Browser Push Notifications
 
 ---
 
-## 🧠 How It Works
-
-1. User signs up.
-2. User provides:
-
-   * Study goal (e.g., GATE 2026, DSA Mastery, React Development)
-   * Time available per day
-   * Weak & strong subjects
-   * Target date
-3. AI generates a personalized weekly plan.
-4. System schedules tasks and reminders.
-5. User marks tasks as complete.
-6. AI adjusts future plans based on performance.
-
----
-
-## 📂 Project Structure (Planned)
+# 🧠 System Architecture (Visual Overview)
 
 ```
-AI-SmartLearn/
-│
-├── backend/
-│   ├── app/
-│   │   ├── main.py
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   └── utils/
-│   └── requirements.txt
-│
-├── frontend/
-│   ├── src/
-│   ├── public/
-│   └── package.json
-│
-├── README.md
-└── .env
+                        ┌─────────────────────────┐
+                        │        User (Web)       │
+                        └─────────────┬───────────┘
+                                      │
+                                      ▼
+                        ┌─────────────────────────┐
+                        │       React Frontend    │
+                        │  (Dashboard + Planner)  │
+                        └─────────────┬───────────┘
+                                      │ REST API
+                                      ▼
+                        ┌─────────────────────────┐
+                        │      FastAPI Backend    │
+                        │  - Auth Middleware      │
+                        │  - AI Service Layer     │
+                        │  - Task Scheduler       │
+                        └─────────────┬───────────┘
+                                      │
+            ┌─────────────────────────┼─────────────────────────┐
+            ▼                         ▼                         ▼
+ ┌─────────────────┐        ┌─────────────────┐       ┌──────────────────┐
+ │   Supabase DB   │        │     AI API      │       │ Notification     │
+ │  (PostgreSQL)   │        │ (OpenAI/Gemini) │       │ Service Layer    │
+ │ - Users         │        └─────────────────┘       │ - Email          │
+ │ - Study Plans   │                                   │ - Telegram       │
+ │ - Tasks         │                                   │ - Push Alerts    │
+ └─────────────────┘                                   └──────────────────┘
+                                      │
+                                      ▼
+                        ┌─────────────────────────┐
+                        │   Reminder Scheduler    │
+                        │ (APScheduler / Celery)  │
+                        └─────────────────────────┘
 ```
 
 ---
 
-## 📊 Database Design (Initial)
+# 🔄 Workflow Diagram
 
-### Users
+```
+User Input
+   │
+   ▼
+AI Plan Generation
+   │
+   ▼
+Store Plan in Supabase
+   │
+   ▼
+Break Into Tasks
+   │
+   ▼
+Schedule Reminders
+   │
+   ▼
+User Marks Complete
+   │
+   ▼
+AI Adjusts Future Plan
+```
 
-* id
+---
+
+# 🗄️ Supabase Database Schema
+
+## 👤 Users
+
+* id (UUID)
 * name
 * email
 * goal
 * target_date
 * daily_available_time
+* created_at
 
-### StudyPlans
+## 📘 StudyPlans
 
-* id
-* user_id
+* id (UUID)
+* user_id (Foreign Key)
 * generated_plan (JSON)
 * created_at
 
-### Tasks
+## 📝 Tasks
 
-* id
-* user_id
+* id (UUID)
+* user_id (Foreign Key)
 * title
 * description
 * scheduled_time
-* status
+* status (Pending / Completed / Missed)
 * priority
+* created_at
 
 ---
 
-## 🛠️ Setup Instructions
+# 🛠️ Setup Instructions
 
-### 1️⃣ Clone the Repository
+## 1️⃣ Clone Repository
 
 ```bash
 git clone https://github.com/your-username/AI-SmartLearn.git
@@ -158,7 +188,19 @@ cd AI-SmartLearn
 
 ---
 
-### 2️⃣ Backend Setup
+## 2️⃣ Supabase Setup
+
+1. Create project at [https://supabase.com](https://supabase.com)
+2. Create required tables
+3. Enable Supabase Auth
+4. Copy:
+
+   * Project URL
+   * Anon Public Key
+
+---
+
+## 3️⃣ Backend Setup
 
 ```bash
 cd backend
@@ -167,12 +209,12 @@ source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Create `.env` file:
+Create `.env`:
 
 ```
+SUPABASE_URL=your_project_url
+SUPABASE_KEY=your_anon_key
 OPENAI_API_KEY=your_api_key
-DATABASE_URL=your_database_url
-REDIS_URL=your_redis_url
 ```
 
 Run backend:
@@ -183,7 +225,7 @@ uvicorn app.main:app --reload
 
 ---
 
-### 3️⃣ Frontend Setup
+## 4️⃣ Frontend Setup
 
 ```bash
 cd frontend
@@ -193,40 +235,38 @@ npm start
 
 ---
 
-## 🔮 Future Enhancements
+# 🔮 Future Enhancements
 
 * AI-based burnout prediction
-* Gamification (XP, Levels, Badges)
+* ML performance modeling
+* Gamification (XP, badges)
 * WhatsApp integration
-* Voice-based interaction
-* ML-based performance prediction
-* Community leaderboard
+* Mobile App version
+* AI conversational mentor mode
 
 ---
 
-## 🎯 Use Cases
+# 🎯 Use Cases
 
-* Competitive exam preparation (GATE, UPSC, JEE, etc.)
-* Coding interview preparation
-* Skill learning (Web Dev, AI, ML, etc.)
-* Time management improvement
-* Personal productivity enhancement
-
----
-
-## 💡 Vision
-
-AI-SmartLearn aims to become an adaptive AI learning companion that understands user behavior, predicts performance gaps, and ensures goal achievement through intelligent scheduling and reminders.
+* GATE / UPSC / JEE preparation
+* Coding interviews
+* Skill learning (Web Dev, AI, ML)
+* Habit building
+* Productivity improvement
 
 ---
 
-## 🤝 Contributing
+# 🌟 Vision
 
-Contributions are welcome!
-Feel free to fork the repository and submit pull requests.
+AI-SmartLearn aims to become a fully adaptive AI learning companion that:
+
+* Understands user behavior
+* Predicts weak areas
+* Adjusts plans dynamically
+* Ensures goal achievement through intelligent reminders
 
 ---
 
-## 📜 License
+# 📜 License
 
-This project is licensed under the MIT License.
+MIT License
