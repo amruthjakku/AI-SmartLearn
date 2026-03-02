@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Mobile
+frontend/android/
+frontend/ios/
+frontend/public/
+
+# Build
+frontend/dist/
+backend/dist/
+
+# Capacitor
+frontend/capacitor.config.json

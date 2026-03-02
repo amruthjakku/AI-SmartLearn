@@ -1,11 +1,10 @@
+# 📱 AI-SmartLearn (Mobile App)
 
-# 📚 AI-SmartLearn
+### 🚀 AI-Powered Personalized Learning & Smart Reminder System
 
-### AI-Powered Personalized Learning & Smart Reminder System
+**AI-SmartLearn** is an intelligent mobile learning assistant designed to help you achieve your goals efficiently. It generates **tailored study plans**, adapts to your performance, and sends **smart reminders** directly to your device.
 
-AI-SmartLearn is an intelligent learning assistant that generates **tailored study plans**, adapts to user performance, and sends **smart reminders** to help users achieve their goals efficiently.
-
-The system uses AI APIs and **Supabase** to deliver personalized scheduling, adaptive task management, and real-time notifications.
+Built for **Android** (via Capacitor) and powered by **Supabase** and **AI**, it delivers a seamless, personalized learning experience on the go.
 
 ---
 
@@ -13,85 +12,84 @@ The system uses AI APIs and **Supabase** to deliver personalized scheduling, ada
 
 ### 🎯 Personalized Study Plans
 
-* Generates custom study plans based on:
-
-  * User schedule
-  * Subject / Skill
-  * Daily available time
-  * Target exam date
-  * Skill level
-  * Strengths & weaknesses
+- Generates custom study plans based on:
+  - User schedule
+  - Subject / Skill
+  - Daily available time
+  - Target exam date
+  - Skill level
+  - Strengths & weaknesses
 
 ### 🧠 AI-Powered Task Breakdown
 
-* Converts large goals into micro-tasks
-* Allocates optimal time blocks
-* Adds revision cycles automatically
-* Adjusts plan dynamically based on progress
+- Converts large goals into micro-tasks
+- Allocates optimal time blocks
+- Adds revision cycles automatically
+- Adjusts plan dynamically based on progress
 
 ### 🔔 Smart Reminder System
 
-* Automated daily reminders
-* Adaptive rescheduling for missed tasks
-* Deadline-based urgency escalation
-* Telegram / Email / Web notifications
+- **Push Notifications** for daily tasks
+- Adaptive rescheduling for missed tasks
+- Deadline-based urgency escalation
+- Cross-platform alerts (Telegram / Email)
 
 ### 📊 Progress Analytics
 
-* Completion rate tracking
-* Weekly performance summaries
-* Streak tracking
-* Weak area detection
+- Completion rate tracking
+- Weekly performance summaries
+- Streak tracking
+- Weak area detection
 
 ---
 
 # 🏗️ Tech Stack
 
-## 🖥️ Frontend
+## 📱 Mobile (Android)
 
-* React.js
-* Tailwind CSS
-* Recharts (Analytics Dashboard)
+- **React.js** (UI Framework)
+- **Capacitor** (Native Runtime)
+- **Ionic Framework** (Mobile Components - Optional)
+- **Tailwind CSS** (Styling)
 
 ## 🔙 Backend
 
-* FastAPI
-* APScheduler / Celery (Background jobs)
+- **FastAPI** (Python)
+- **APScheduler / Celery** (Background jobs)
 
 ## 🗄️ Database
 
-* **Supabase**
-
-  * PostgreSQL (Primary Database)
-  * Supabase Auth (Authentication)
-  * Supabase Realtime (Live updates)
-  * Supabase Storage (Optional future feature)
+- **Supabase**
+  - PostgreSQL (Primary Database)
+  - Supabase Auth (Authentication)
+  - Supabase Realtime (Live updates)
 
 ## 🧠 AI Integration
 
-* OpenAI API / Gemini API
+- OpenAI API / Gemini API
 
 ## 🔔 Notifications
 
-* Email (SMTP / SendGrid)
-* Telegram Bot API
-* Browser Push Notifications
+- **Firebase Cloud Messaging (FCM)** (Push Notifications)
+- Telegram Bot API
+- Email (SMTP / SendGrid)
 
 ---
 
-# 🧠 System Architecture (Visual Overview)
+# 🧠 System Architecture (Mobile)
 
 ```
                         ┌─────────────────────────┐
-                        │        User (Web)       │
+                        │      User (Mobile)      │
+                        │    (Android / iOS)      │
                         └─────────────┬───────────┘
                                       │
                                       ▼
                         ┌─────────────────────────┐
-                        │       React Frontend    │
-                        │  (Dashboard + Planner)  │
+                        │   React Mobile App      │
+                        │      (Capacitor)        │
                         └─────────────┬───────────┘
-                                      │ REST API
+                                      │ HTTPS / REST
                                       ▼
                         ┌─────────────────────────┐
                         │      FastAPI Backend    │
@@ -105,16 +103,10 @@ The system uses AI APIs and **Supabase** to deliver personalized scheduling, ada
  ┌─────────────────┐        ┌─────────────────┐       ┌──────────────────┐
  │   Supabase DB   │        │     AI API      │       │ Notification     │
  │  (PostgreSQL)   │        │ (OpenAI/Gemini) │       │ Service Layer    │
- │ - Users         │        └─────────────────┘       │ - Email          │
- │ - Study Plans   │                                   │ - Telegram       │
- │ - Tasks         │                                   │ - Push Alerts    │
- └─────────────────┘                                   └──────────────────┘
-                                      │
-                                      ▼
-                        ┌─────────────────────────┐
-                        │   Reminder Scheduler    │
-                        │ (APScheduler / Celery)  │
-                        └─────────────────────────┘
+ │ - Users         │        └─────────────────┘       │ - FCM (Push)     │
+ │ - Study Plans   │                                  │ - Telegram       │
+ │ - Tasks         │                                  │ - Email          │
+ └─────────────────┘                                  └──────────────────┘
 ```
 
 ---
@@ -122,7 +114,7 @@ The system uses AI APIs and **Supabase** to deliver personalized scheduling, ada
 # 🔄 Workflow Diagram
 
 ```
-User Input
+User Input (Mobile)
    │
    ▼
 AI Plan Generation
@@ -134,7 +126,7 @@ Store Plan in Supabase
 Break Into Tasks
    │
    ▼
-Schedule Reminders
+Schedule Reminders (Push/Telegram)
    │
    ▼
 User Marks Complete
@@ -149,31 +141,31 @@ AI Adjusts Future Plan
 
 ## 👤 Users
 
-* id (UUID)
-* name
-* email
-* goal
-* target_date
-* daily_available_time
-* created_at
+- id (UUID)
+- name
+- email
+- goal
+- target_date
+- daily_available_time
+- created_at
 
 ## 📘 StudyPlans
 
-* id (UUID)
-* user_id (Foreign Key)
-* generated_plan (JSON)
-* created_at
+- id (UUID)
+- user_id (Foreign Key)
+- generated_plan (JSON)
+- created_at
 
 ## 📝 Tasks
 
-* id (UUID)
-* user_id (Foreign Key)
-* title
-* description
-* scheduled_time
-* status (Pending / Completed / Missed)
-* priority
-* created_at
+- id (UUID)
+- user_id (Foreign Key)
+- title
+- description
+- scheduled_time
+- status (Pending / Completed / Missed)
+- priority
+- created_at
 
 ---
 
@@ -186,19 +178,12 @@ git clone https://github.com/your-username/AI-SmartLearn.git
 cd AI-SmartLearn
 ```
 
----
-
 ## 2️⃣ Supabase Setup
 
-1. Create project at [https://supabase.com](https://supabase.com)
-2. Create required tables
-3. Enable Supabase Auth
-4. Copy:
-
-   * Project URL
-   * Anon Public Key
-
----
+1.  Create project at [https://supabase.com](https://supabase.com)
+2.  Create required tables
+3.  Enable Supabase Auth
+4.  Copy Project URL & Anon Public Key to `.env`
 
 ## 3️⃣ Backend Setup
 
@@ -223,36 +208,92 @@ Run backend:
 uvicorn app.main:app --reload
 ```
 
----
+## 4️⃣ Mobile App Setup
 
-## 4️⃣ Frontend Setup
+### Prerequisites
+
+- Node.js & npm
+- Android Studio (for Android build)
+- Java/JDK 17+
+
+### Install Dependencies
 
 ```bash
 cd frontend
 npm install
+```
+
+### Run on Web (Browser)
+
+```bash
 npm start
 ```
+
+### Run on Android Emulator/Device
+
+First, sync the web build with the native project:
+
+```bash
+npm run build
+npx cap sync
+```
+
+Open in Android Studio:
+
+```bash
+npx cap open android
+```
+
+From Android Studio, click the **Run** (Play) button to launch the app on an emulator or connected device.
+
+---
+
+# 📲 Publishing to Play Store
+
+## 1️⃣ Prepare Release Build
+
+1.  **Generate Signed Bundle/APK**:
+    - Open project in Android Studio (`npx cap open android`).
+    - Go to **Build** > **Generate Signed Bundle / APK**.
+    - Select **Android App Bundle** (AAB) for Play Store.
+    - Create a new **Key store path** (keep this file safe!).
+    - Fill in key details (Alias, Password).
+    - Select **Release** build variant.
+    - Click **Finish**.
+
+2.  **Locate the File**:
+    - The `.aab` file will be generated in `android/app/release/`.
+
+## 2️⃣ Upload to Google Play Console
+
+1.  Go to [Google Play Console](https://play.google.com/console).
+2.  **Create App**: Enter app name, language, and select "App" type.
+3.  **Set up App**: Complete the Dashboard tasks (Privacy Policy, App Access, Content Ratings, Target Audience, etc.).
+4.  **Create Release**:
+    - Go to **Production** > **Create new release**.
+    - Upload the **Signed AAB** file you generated.
+    - Add release notes.
+    - **Review and rollout** to production!
 
 ---
 
 # 🔮 Future Enhancements
 
-* AI-based burnout prediction
-* ML performance modeling
-* Gamification (XP, badges)
-* WhatsApp integration
-* Mobile App version
-* AI conversational mentor mode
+- AI-based burnout prediction
+- ML performance modeling
+- Gamification (XP, badges)
+- WhatsApp integration
+- AI conversational mentor mode
 
 ---
 
 # 🎯 Use Cases
 
-* GATE / UPSC / JEE preparation
-* Coding interviews
-* Skill learning (Web Dev, AI, ML)
-* Habit building
-* Productivity improvement
+- GATE / UPSC / JEE preparation
+- Coding interviews
+- Skill learning (Web Dev, AI, ML)
+- Habit building
+- Productivity improvement
 
 ---
 
@@ -260,13 +301,8 @@ npm start
 
 AI-SmartLearn aims to become a fully adaptive AI learning companion that:
 
-* Understands user behavior
-* Predicts weak areas
-* Adjusts plans dynamically
-* Ensures goal achievement through intelligent reminders
+- Understands user behavior
+- Predicts weak areas
+- Adjusts plans dynamically
+- Ensures goal achievement through intelligent reminders
 
----
-
-# 📜 License
-
-MIT License
