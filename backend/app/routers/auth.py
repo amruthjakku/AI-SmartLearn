@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr
 from typing import Optional
-from app.services.supabase_client import get_supabase_client
+from app.dependencies import get_supabase_anon
 from app.config import get_settings
 
 router = APIRouter()
@@ -41,7 +41,7 @@ class UserResponse(BaseModel):
 async def register(user_data: UserRegister):
     """Register a new user."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_anon()
         
         # Register user with Supabase Auth
         auth_response = supabase.auth.sign_up({
@@ -79,7 +79,7 @@ async def register(user_data: UserRegister):
 async def login(user_data: UserLogin):
     """Login user."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_anon()
         
         auth_response = supabase.auth.sign_in_with_password({
             "email": user_data.email,
@@ -111,7 +111,7 @@ async def login(user_data: UserLogin):
 async def logout(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Logout user."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_anon()
         supabase.auth.sign_out()
         return {"message": "Successfully logged out"}
     except Exception as e:
@@ -125,7 +125,7 @@ async def logout(credentials: HTTPAuthorizationCredentials = Depends(security)):
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Get current authenticated user."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_anon()
         user = supabase.auth.get_user(credentials.credentials)
         
         if user.user is None:
