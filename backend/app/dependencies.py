@@ -4,43 +4,54 @@ Centralizes token verification so any fix here applies everywhere.
 """
 import os
 import functools
+import httpx
 from fastapi import HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 security = HTTPBearer()
 
-# --- NUCLEAR PROXY FIX ---
-# Some versions of Supabase/GoTrue/Postgrest pass a `proxy` argument to httpx
-# which is invalid in newer versions of httpx used on Vercel. 
-# We monkeypatch the underlying Client to ignore this argument.
+# --- THE ULTIMATE NUCLEAR PROXY FIX ---
+# We monkeypatch the underlying HTTPX and GoTrue clients to 
+# COMPLETELY IGNORE the 'proxy' argument. This handles all versions 
+# of Supabase/GoTrue/Postgrest/HTTPX and the Vercel environment.
+
+# 1. Patch httpx.Client
+_orig_httpx_init = httpx.Client.__init__
+@functools.wraps(_orig_httpx_init)
+def _patched_httpx_init(self, *args, **kwargs):
+    kwargs.pop("proxy", None)
+    kwargs.pop("proxies", None) # Older httpx
+    return _orig_httpx_init(self, *args, **kwargs)
+httpx.Client.__init__ = _patched_httpx_init
+
+# 2. Patch httpx.AsyncClient
+_orig_httpx_async_init = httpx.AsyncClient.__init__
+@functools.wraps(_orig_httpx_async_init)
+def _patched_httpx_async_init(self, *args, **kwargs):
+    kwargs.pop("proxy", None)
+    kwargs.pop("proxies", None)
+    return _orig_httpx_async_init(self, *args, **kwargs)
+httpx.AsyncClient.__init__ = _patched_httpx_async_init
+
+# 3. Patch gotrue.Client if it exists (for older supabase-py)
 try:
     import gotrue
-    if hasattr(gotrue, "SyncClient"):
-        _orig_init = gotrue.SyncClient.__init__
-        @functools.wraps(_orig_init)
-        def _patched_init(self, *args, **kwargs):
-            kwargs.pop("proxy", None)
-            return _orig_init(self, *args, **kwargs)
-        gotrue.SyncClient.__init__ = _patched_init
-    
-    # Also patch the async client just in case
-    if hasattr(gotrue, "AsyncClient"):
-        _orig_init_async = gotrue.AsyncClient.__init__
-        @functools.wraps(_orig_init_async)
-        def _patched_init_async(self, *args, **kwargs):
-            kwargs.pop("proxy", None)
-            return _orig_init_async(self, *args, **kwargs)
-        gotrue.AsyncClient.__init__ = _patched_init_async
+    client_classes = ["Client", "SyncClient", "AsyncClient"]
+    for cls_name in client_classes:
+        if hasattr(gotrue, cls_name):
+            cls = getattr(gotrue, cls_name)
+            _orig_cls_init = cls.__init__
+            @functools.wraps(_orig_cls_init)
+            def _patched_cls_init(self, *args, **kwargs):
+                kwargs.pop("proxy", None)
+                return _orig_cls_init(self, *args, **kwargs)
+            cls.__init__ = _patched_cls_init
 except (ImportError, AttributeError):
     pass
-# -------------------------
+# -------------------------------------
 
 def get_supabase_anon():
-    """
-    Returns a fresh Supabase client with proxy env vars stripped.
-    This avoids the `httpx.Client(proxy=...)` crash on Vercel.
-    """
-    # Remove proxy vars that httpx picks up automatically
+    """Returns a fresh Supabase client with proxy env vars stripped."""
     for var in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY",
                 "http_proxy", "https_proxy", "all_proxy"):
         os.environ.pop(var, None)
@@ -59,7 +70,6 @@ async def get_current_user_id(
         client = get_supabase_anon()
         res = client.auth.get_user(credentials.credentials)
 
-        # Handle different response shapes across SDK versions
         user = getattr(res, "user", None) or (
             getattr(getattr(res, "data", None), "user", None)
         )
@@ -69,4 +79,5 @@ async def get_current_user_id(
     except HTTPException:
         raise
     except Exception as exc:
-        raise HTTPException(status_code=401, detail=f"Auth error: {exc}") from exc
+        # Re-raising without prefix to avoid UI bracket pollution
+        raise HTTPException(status_code=401, detail=str(exc)) from exc
