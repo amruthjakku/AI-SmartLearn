@@ -37,12 +37,17 @@ async def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depend
     """Extract user ID from JWT token."""
     try:
         supabase = get_supabase_client()
-        user = supabase.auth.get_user(credentials.credentials)
-        if user.user is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
-        return user.user.id
-    except Exception:
+        user_res = supabase.auth.get_user(credentials.credentials)
+        if hasattr(user_res, 'user') and user_res.user:
+            return user_res.user.id
+        elif hasattr(user_res, 'data') and user_res.data and user_res.data.user:
+             return user_res.data.user.id
+        
+        print(f"DEBUG: Auth user not found in response: {user_res}")
         raise HTTPException(status_code=401, detail="Invalid token")
+    except Exception as e:
+        print(f"DEBUG: Auth verification error: {str(e)}")
+        raise HTTPException(status_code=401, detail=f"Auth error: {str(e)}")
 
 
 @router.post("/generate")
