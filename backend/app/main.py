@@ -61,13 +61,13 @@ if os.path.exists(frontend_dist_path):
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup."""
-    print(f"🚀 {settings.app_name} API v{settings.app_version} started")
+    print(f"STARTUP: {settings.app_name} API v{settings.app_version} started")
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown."""
-    print(f"👋 {settings.app_name} API shutting down")
+    print(f"SHUTDOWN: {settings.app_name} API shutting down")
 
 
 if __name__ == "__main__":
