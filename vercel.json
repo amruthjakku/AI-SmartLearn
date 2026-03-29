@@ -3,6 +3,11 @@
   "public": true,
   "buildCommand": "npm run build",
   "outputDirectory": "frontend/dist",
+  "functions": {
+    "api/index.py": {
+      "runtime": "python3.12"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
