@@ -1,12 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 from app.services.supabase_client import get_supabase_client
+from app.dependencies import get_current_user_id
 
 router = APIRouter()
-security = HTTPBearer()
 
 
 class TaskCreate(BaseModel):
@@ -27,18 +26,6 @@ class TaskUpdate(BaseModel):
     duration_minutes: Optional[int] = None
     priority: Optional[str] = None
     status: Optional[str] = None
-
-
-async def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
-    """Extract user ID from JWT token."""
-    try:
-        supabase = get_supabase_client()
-        user = supabase.auth.get_user(credentials.credentials)
-        if user.user is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
-        return user.user.id
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid token")
 
 
 @router.post("/")

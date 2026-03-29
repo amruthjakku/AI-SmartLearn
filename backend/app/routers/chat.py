@@ -1,31 +1,15 @@
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from app.services.supabase_client import get_supabase_client
 from app.services.ai_service import AIService
+from app.dependencies import get_current_user_id
 
 router = APIRouter()
-security = HTTPBearer()
 
 class ChatMessageRequest(BaseModel):
     message: str
-
-async def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
-    try:
-        supabase = get_supabase_client()
-        user_res = supabase.auth.get_user(credentials.credentials)
-        if hasattr(user_res, 'user') and user_res.user:
-            return user_res.user.id
-        elif hasattr(user_res, 'data') and user_res.data and user_res.data.user:
-             return user_res.data.user.id
-        
-        print(f"DEBUG: Auth user not found in response: {user_res}")
-        raise HTTPException(status_code=401, detail="Invalid token")
-    except Exception as e:
-        print(f"DEBUG: Auth verification error: {str(e)}")
-        raise HTTPException(status_code=401, detail=f"Auth error: {str(e)}")
 
 @router.get("/history")
 async def get_chat_history(user_id: str = Depends(get_current_user_id)):

@@ -1,12 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from app.services.supabase_client import get_supabase_client
+from app.dependencies import get_current_user_id
 
 router = APIRouter()
-security = HTTPBearer()
 
 
 class UserProfile(BaseModel):
@@ -16,8 +15,8 @@ class UserProfile(BaseModel):
     target_date: Optional[str] = None
     daily_available_time: Optional[int] = None  # in minutes
     skill_level: Optional[str] = None  # beginner, intermediate, advanced
-    strengths: Optional[list[str]] = None
-    weaknesses: Optional[list[str]] = None
+    strengths: Optional[List[str]] = None
+    weaknesses: Optional[List[str]] = None
 
 
 class UserUpdate(BaseModel):
@@ -27,20 +26,8 @@ class UserUpdate(BaseModel):
     target_date: Optional[str] = None
     daily_available_time: Optional[int] = None
     skill_level: Optional[str] = None
-    strengths: Optional[list[str]] = None
-    weaknesses: Optional[list[str]] = None
-
-
-async def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
-    """Extract user ID from JWT token."""
-    try:
-        supabase = get_supabase_client()
-        user = supabase.auth.get_user(credentials.credentials)
-        if user.user is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
-        return user.user.id
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid token")
+    strengths: Optional[List[str]] = None
+    weaknesses: Optional[List[str]] = None
 
 
 @router.get("/profile")
