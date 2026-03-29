@@ -17,9 +17,7 @@ class Settings(BaseSettings):
     supabase_service_key: Optional[str] = None
     
     # AI settings
-    openai_api_key: Optional[str] = None
-    gemini_api_key: Optional[str] = None
-    groq_api_key: Optional[str] = None
+    groq_api_key: str
     
     # Security
     secret_key: str = "your-secret-key-change-in-production"

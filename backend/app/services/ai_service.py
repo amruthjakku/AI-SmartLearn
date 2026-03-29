@@ -1,5 +1,5 @@
 import json
-from typing import Optional, List, Dict, Any
+from typing import List, Dict, Any
 from datetime import datetime, timedelta
 from openai import AsyncOpenAI
 from app.config import get_settings
@@ -8,28 +8,15 @@ settings = get_settings()
 
 
 class AIService:
-    """Service for AI-powered study plan generation."""
-    client: Optional[AsyncOpenAI]
-    model_large: Optional[str]
-    model_fast: Optional[str]
+    """Service for AI-powered study plan generation using Groq."""
     
     def __init__(self):
-        # Configure Groq if available (OpenAI-compatible)
-        if settings.groq_api_key:
-            self.client = AsyncOpenAI(
-                api_key=settings.groq_api_key,
-                base_url="https://api.groq.com/openai/v1"
-            )
-            self.model_large = "llama-3.3-70b-versatile"
-            self.model_fast = "llama-3.1-8b-instant"
-        elif settings.openai_api_key:
-            self.client = AsyncOpenAI(api_key=settings.openai_api_key)
-            self.model_large = "gpt-4-turbo"
-            self.model_fast = "gpt-3.5-turbo"
-        else:
-            self.client = None
-            self.model_large = None
-            self.model_fast = None
+        self.client = AsyncOpenAI(
+            api_key=settings.groq_api_key,
+            base_url="https://api.groq.com/openai/v1"
+        )
+        self.model_large = "llama-3.3-70b-versatile"
+        self.model_fast = "llama-3.1-8b-instant"
     
     async def generate_study_plan(
         self,
@@ -37,18 +24,11 @@ class AIService:
         target_date: str,
         daily_available_time: int,
         skill_level: str = "beginner",
-        strengths: Optional[List[str]] = None,
-        weaknesses: Optional[List[str]] = None,
-        additional_notes: Optional[str] = None
+        strengths: List[str] = None,
+        weaknesses: List[str] = None,
+        additional_notes: str = None
     ) -> Dict[str, Any]:
-        """Generate a personalized study plan using AI."""
-        
-        if not self.client or not self.model_large:
-            # Return a basic plan structure if AI is not configured
-            return self._generate_basic_plan(goal, target_date, daily_available_time)
-        
-        client = self.client
-        model = self.model_large
+        """Generate a personalized study plan using Groq AI."""
         
         prompt = self._build_plan_generation_prompt(
             goal, target_date, daily_available_time, skill_level,
@@ -56,8 +36,8 @@ class AIService:
         )
         
         try:
-            response = await client.chat.completions.create(
-                model=model,
+            response = await self.client.chat.completions.create(
+                model=self.model_large,
                 messages=[
                     {"role": "system", "content": "You are an expert study planner and educational consultant. Generate detailed, actionable study plans in JSON format."},
                     {"role": "user", "content": prompt}
@@ -81,7 +61,7 @@ class AIService:
         skill_level: str,
         strengths: List[str],
         weaknesses: List[str],
-        additional_notes: Optional[str]
+        additional_notes: str
     ) -> str:
         """Build the prompt for plan generation."""
         
@@ -155,7 +135,7 @@ Consider the user's skill level and focus more time on weak areas.
         target_date: str,
         daily_available_time: int
     ) -> Dict[str, Any]:
-        """Generate a basic plan structure when AI is not available."""
+        """Generate a basic plan structure when AI fails."""
         
         # Calculate days until target
         try:
@@ -201,13 +181,7 @@ Consider the user's skill level and focus more time on weak areas.
         current_plan: Dict[str, Any],
         progress_data: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Adjust study plan based on user progress."""
-        
-        if not self.client or not self.model_large:
-            return current_plan
-        
-        client = self.client
-        model = self.model_large
+        """Adjust study plan based on user progress using Groq AI."""
         
         prompt = f"""
 Given the current study plan and user progress, suggest adjustments to optimize learning.
@@ -228,8 +202,8 @@ Add new tasks if necessary to fill gaps.
 """
         
         try:
-            response = await client.chat.completions.create(
-                model=model,
+            response = await self.client.chat.completions.create(
+                model=self.model_large,
                 messages=[
                     {"role": "system", "content": "You are an expert study planner. Adjust plans based on user progress."},
                     {"role": "user", "content": prompt}
@@ -250,15 +224,7 @@ Add new tasks if necessary to fill gaps.
         tasks_completed: List[Dict[str, Any]],
         tasks_pending: List[Dict[str, Any]]
     ) -> str:
-        """Generate a motivational summary of daily progress."""
-        
-        if not self.client or not self.model_fast:
-            completed_count = len(tasks_completed)
-            pending_count = len(tasks_pending)
-            return f"Today you completed {completed_count} task(s) and have {pending_count} pending. Keep up the great work!"
-        
-        client = self.client
-        model = self.model_fast
+        """Generate a motivational summary of daily progress using Groq AI."""
         
         prompt = f"""
 Generate a brief, motivational summary for the user's daily progress.
@@ -270,8 +236,8 @@ Keep it concise (2-3 sentences), encouraging, and suggest what to focus on next.
 """
         
         try:
-            response = await client.chat.completions.create(
-                model=model,
+            response = await self.client.chat.completions.create(
+                model=self.model_fast,
                 messages=[
                     {"role": "system", "content": "You are a supportive study coach."},
                     {"role": "user", "content": prompt}
@@ -289,17 +255,7 @@ Keep it concise (2-3 sentences), encouraging, and suggest what to focus on next.
         self,
         user_patterns: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Suggest optimal study times based on user patterns."""
-        
-        if not self.client or not self.model_fast:
-            return {
-                "morning": "9:00 AM - 11:00 AM",
-                "afternoon": "2:00 PM - 4:00 PM",
-                "evening": "7:00 PM - 9:00 PM"
-            }
-        
-        client = self.client
-        model = self.model_fast
+        """Suggest optimal study times based on user patterns using Groq AI."""
         
         prompt = f"""
 Based on the user's study patterns, suggest optimal study times.
@@ -311,8 +267,8 @@ Include a brief explanation for each suggestion.
 """
         
         try:
-            response = await client.chat.completions.create(
-                model=model,
+            response = await self.client.chat.completions.create(
+                model=self.model_fast,
                 messages=[
                     {"role": "system", "content": "You are a productivity expert."},
                     {"role": "user", "content": prompt}
