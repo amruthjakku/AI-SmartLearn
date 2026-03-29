@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     # AI settings
     openai_api_key: Optional[str] = None
     gemini_api_key: Optional[str] = None
+    groq_api_key: Optional[str] = None
     
     # Security
     secret_key: str = "your-secret-key-change-in-production"
@@ -34,7 +35,7 @@ class Settings(BaseSettings):
     smtp_password: Optional[str] = None
     
     class Config:
-        env_file = ".env"
+        env_file = "../.env"
         env_file_encoding = "utf-8"
 
 
