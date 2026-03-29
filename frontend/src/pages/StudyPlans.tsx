@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { toast } from 'react-hot-toast'
 import { Plus, BookOpen, Calendar, Clock, Trash2, Eye } from 'lucide-react'
 import { api } from '../services/api'
 
@@ -58,6 +59,7 @@ export default function StudyPlans() {
       })
 
       setShowCreateModal(false)
+      toast.success('Study plan created successfully!')
       setFormData({
         goal: '',
         target_date: '',
@@ -70,6 +72,7 @@ export default function StudyPlans() {
       loadPlans()
     } catch (error) {
       console.error('Failed to create plan:', error)
+      toast.error('Failed to create study plan')
     } finally {
       setCreating(false)
     }
@@ -89,9 +92,11 @@ export default function StudyPlans() {
     
     try {
       await api.deletePlan(planId)
+      toast.success('Study plan deleted')
       loadPlans()
     } catch (error) {
       console.error('Failed to delete plan:', error)
+      toast.error('Failed to delete plan')
     }
   }
 

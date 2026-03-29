@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { toast } from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 import { Plus, BookOpen, CheckCircle, Clock, TrendingUp } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
@@ -48,9 +49,11 @@ export default function Dashboard() {
   const handleCompleteTask = async (taskId: string) => {
     try {
       await api.completeTask(taskId)
+      toast.success('Task completed!')
       loadDashboardData()
     } catch (error) {
       console.error('Failed to complete task:', error)
+      toast.error('Failed to complete task')
     }
   }
 

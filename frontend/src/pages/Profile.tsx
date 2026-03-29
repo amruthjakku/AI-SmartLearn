@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { toast } from 'react-hot-toast'
 import { User, Mail, Calendar, Trophy, TrendingUp, Save } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../services/api'
@@ -51,8 +52,10 @@ export default function Profile() {
       await api.updateProfile({ name })
       setProfile(prev => prev ? { ...prev, name } : null)
       setEditMode(false)
+      toast.success('Profile updated!')
     } catch (error) {
       console.error('Failed to save profile:', error)
+      toast.error('Failed to update profile')
     } finally {
       setSaving(false)
     }
@@ -190,7 +193,10 @@ export default function Profile() {
 
       {/* Sign Out Button */}
       <button
-        onClick={signOut}
+        onClick={async () => {
+          await signOut()
+          toast.success('Signed out')
+        }}
         className="w-full py-3 px-4 border border-red-300 text-red-600 rounded-lg hover:bg-red-50"
       >
         Sign Out

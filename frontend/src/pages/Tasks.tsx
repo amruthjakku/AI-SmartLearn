@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { toast } from 'react-hot-toast'
 import { CheckCircle, Clock, Calendar, AlertCircle, RefreshCw, Trash2 } from 'lucide-react'
 import { api } from '../services/api'
 
@@ -38,18 +39,22 @@ export default function Tasks() {
   const handleCompleteTask = async (taskId: string) => {
     try {
       await api.completeTask(taskId)
+      toast.success('Task completed!')
       loadTasks()
     } catch (error) {
       console.error('Failed to complete task:', error)
+      toast.error('Failed to complete task')
     }
   }
 
   const handleMissTask = async (taskId: string) => {
     try {
       await api.missTask(taskId)
+      toast.success('Task marked as missed')
       loadTasks()
     } catch (error) {
       console.error('Failed to mark task as missed:', error)
+      toast.error('Failed to update task')
     }
   }
 
@@ -58,9 +63,11 @@ export default function Tasks() {
     
     try {
       await api.deleteTask(taskId)
+      toast.success('Task deleted')
       loadTasks()
     } catch (error) {
       console.error('Failed to delete task:', error)
+      toast.error('Failed to delete task')
     }
   }
 
