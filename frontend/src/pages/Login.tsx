@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { toast } from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -18,6 +19,9 @@ export default function Login() {
     
     if (error) {
       setError(error.message || 'Failed to sign in')
+      toast.error(error.message || 'Failed to sign in')
+    } else {
+      toast.success('Signed in successfully!')
     }
     
     setLoading(false)

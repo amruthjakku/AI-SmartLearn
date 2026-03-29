@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard'
 import StudyPlans from './pages/StudyPlans'
 import Tasks from './pages/Tasks'
 import Profile from './pages/Profile'
+import { Toaster } from 'react-hot-toast'
 import Layout from './components/Layout'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -47,6 +48,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <AuthProvider>
+      <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         {/* Public routes */}
         <Route 

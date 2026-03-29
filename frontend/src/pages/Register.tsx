@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { toast } from 'react-hot-toast'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -27,10 +28,20 @@ export default function Register() {
 
     setLoading(true)
 
-    const { error } = await signUp(email, password, name)
+    const { error, data } = await signUp(email, password, name)
     
     if (error) {
       setError(error.message || 'Failed to create account')
+      toast.error(error.message || 'Failed to create account')
+    } else {
+      // If data exists, signup was successful
+      if (data?.session) {
+        toast.success('Account created successfully!')
+      } else {
+        toast.success('Confirm email has been sent, check and verify', {
+          duration: 6000,
+        })
+      }
     }
     
     setLoading(false)
