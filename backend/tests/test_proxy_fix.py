@@ -35,7 +35,8 @@ class TestProxyFix(unittest.TestCase):
         except TypeError as e:
             self.fail(f"❌ httpx.AsyncClient still crashes with proxy argument: {e}")
 
-    def test_environ_pop(self):
+    @patch("supabase.create_client")
+    def test_environ_pop(self, mock_create):
         """Verify that get_supabase_anon pops proxy env vars."""
         os.environ["HTTP_PROXY"] = "http://bad-proxy"
         
