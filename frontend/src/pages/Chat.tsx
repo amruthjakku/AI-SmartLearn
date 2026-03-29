@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Send, Trash2, Bot, User, CheckCircle, XCircle, Loader2 } from 'lucide-react'
+import { Send, Trash2, Bot, User, CheckCircle, Loader2 } from 'lucide-react'
 import { api } from '../services/api'
 import { toast } from 'react-hot-toast'
 
