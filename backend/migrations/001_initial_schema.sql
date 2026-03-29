@@ -82,3 +82,20 @@ CREATE POLICY "Users can update their own tasks" ON public.tasks
 
 CREATE POLICY "Users can delete their own tasks" ON public.tasks
     FOR DELETE USING (auth.uid() = user_id);
+
+-- 4. Create trigger for automatic profile creation
+-- This ensures a profile is created whenever a new user signs up via Supabase Auth
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO public.profiles (id, name)
+    VALUES (new.id, new.raw_user_meta_data->>'name');
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create the trigger
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+    AFTER INSERT ON auth.users
+    FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();

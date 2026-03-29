@@ -1,5 +1,5 @@
 import json
-from typing import List, Dict, Any
+from typing import Optional, List, Dict, Any
 from datetime import datetime, timedelta
 from openai import AsyncOpenAI
 from app.config import get_settings
@@ -24,9 +24,9 @@ class AIService:
         target_date: str,
         daily_available_time: int,
         skill_level: str = "beginner",
-        strengths: List[str] = None,
-        weaknesses: List[str] = None,
-        additional_notes: str = None
+        strengths: Optional[List[str]] = None,
+        weaknesses: Optional[List[str]] = None,
+        additional_notes: Optional[str] = None
     ) -> Dict[str, Any]:
         """Generate a personalized study plan using Groq AI."""
         
@@ -61,7 +61,7 @@ class AIService:
         skill_level: str,
         strengths: List[str],
         weaknesses: List[str],
-        additional_notes: str
+        additional_notes: Optional[str]
     ) -> str:
         """Build the prompt for plan generation."""
         

@@ -1,3 +1,5 @@
+import { supabase } from './supabase'
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
 interface RequestOptions {
@@ -13,14 +15,15 @@ class ApiService {
     this.baseUrl = baseUrl
   }
 
-  private getAuthToken(): string | null {
-    return localStorage.getItem('sb-access-token')
+  private async getAuthToken(): Promise<string | null> {
+    const { data } = await supabase.auth.getSession()
+    return data.session?.access_token || null
   }
 
   async request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
     const { method = 'GET', headers = {}, body } = options
 
-    const token = this.getAuthToken()
+    const token = await this.getAuthToken()
     const defaultHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
