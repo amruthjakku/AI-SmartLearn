@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { Home, BookOpen, CheckSquare, User, LogOut } from 'lucide-react'
+import { MessageSquare, Layout as LayoutIcon, BookOpen, CheckSquare, User, LogOut } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 interface LayoutProps {
@@ -12,7 +12,8 @@ export default function Layout({ children }: LayoutProps) {
   const location = useLocation()
   
   const navItems = [
-    { path: '/', icon: Home, label: 'Home' },
+    { path: '/', icon: MessageSquare, label: 'Chat' },
+    { path: '/overview', icon: LayoutIcon, label: 'Overview' },
     { path: '/plans', icon: BookOpen, label: 'Plans' },
     { path: '/tasks', icon: CheckSquare, label: 'Tasks' },
     { path: '/profile', icon: User, label: 'Profile' },

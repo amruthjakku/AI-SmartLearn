@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from app.config import get_settings
-from app.routers import auth, users, plans, tasks, health
+from app.routers import auth, users, plans, tasks, health, chat
 
 settings = get_settings()
 
@@ -29,6 +29,7 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(plans.router, prefix="/api/plans", tags=["Study Plans"])
 app.include_router(tasks.router, prefix="/api/tasks", tags=["Tasks"])
+app.include_router(chat.router, prefix="/api/chat", tags=["Chat"])
 
 # --- Frontend Serving ---
 # Serve static files from the frontend/dist directory if it exists

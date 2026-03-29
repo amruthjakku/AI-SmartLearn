@@ -99,3 +99,25 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- 5. Create chat_messages table
+CREATE TABLE IF NOT EXISTS public.chat_messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
+    role TEXT NOT NULL,          -- 'user' | 'assistant'
+    content TEXT NOT NULL,
+    metadata JSONB,              -- stores pending_plan, action_type, etc.
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS on chat_messages
+ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own chat messages" ON public.chat_messages
+    FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own chat messages" ON public.chat_messages
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own chat messages" ON public.chat_messages
+    FOR DELETE USING (auth.uid() = user_id);

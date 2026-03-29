@@ -187,6 +187,24 @@ class ApiService {
       method: 'DELETE',
     })
   }
+
+  // Chat endpoints
+  async getChatHistory() {
+    return this.request<{ history: any[] }>('/chat/history')
+  }
+
+  async sendMessage(message: string) {
+    return this.request<any>('/chat/message', {
+      method: 'POST',
+      body: { message },
+    })
+  }
+
+  async clearChatHistory() {
+    return this.request<{ message: string }>('/chat/history', {
+      method: 'DELETE',
+    })
+  }
 }
 
 export const api = new ApiService(API_BASE_URL)

@@ -286,3 +286,63 @@ Include a brief explanation for each suggestion.
                 "afternoon": "2:00 PM - 4:00 PM",
                 "evening": "7:00 PM - 9:00 PM"
             }
+
+    async def chat(
+        self,
+        message: str,
+        history: List[Dict[str, str]],
+        user_profile: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Conversational AI for SmartBud."""
+        
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        
+        system_prompt = f"""
+You are SmartBud, a casual, friendly, and supportive AI study coach. Your goal is to help users plan their studies and manage tasks effectively.
+Current Date: {current_date}
+User Profile: {json.dumps(user_profile)}
+
+PERSONA:
+- Casual, uses "hey", "cool", "nice", "keep it up".
+- Encouraging but realistic about study goals.
+- Always refers to yourself as SmartBud.
+
+CAPABILITIES:
+1. **Planning**: If a user wants to learn something new, ask for info (goal, deadline, time available, level) if not already clear. 
+2. **Confirmation**: Once you have enough info, propose a summary of the plan and set `action: "confirm_plan"`. 
+3. **Execution**: If the user confirms (e.g., "looks good", "do it"), set `action: "execute_plan"` and include the `plan_params` (goal, target_date, etc.).
+4. **Task Update**: If the user says they finished something, set `action: "task_update"` with `task_id` and `new_status`.
+
+Response Format (JSON):
+{{
+    "reply": "Your friendly message here",
+    "action": "chat" | "confirm_plan" | "execute_plan" | "task_update",
+    "meta": {{
+        "pending_plan": {{ ... }}, -- if confirming
+        "plan_params": {{ ... }},  -- if executing
+        "task_update": {{ "id": "...", "status": "..." }} -- if updating
+    }}
+}}
+"""
+        
+        messages = [{"role": "system", "content": system_prompt}]
+        # Add limited history for context
+        if history:
+            messages.extend(history[-10:])
+        messages.append({"role": "user", "content": message})
+        
+        try:
+            response = await self.client.chat.completions.create(
+                model=self.model_large,
+                messages=messages,
+                response_format={"type": "json_object"},
+                temperature=0.8
+            )
+            
+            return json.loads(response.choices[0].message.content)
+        except Exception as e:
+            print(f"Chat Error: {e}")
+            return {
+                "reply": "Hey! Sorry, my brain hit a snag. Can you say that again?",
+                "action": "chat"
+            }
