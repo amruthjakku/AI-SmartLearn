@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
-from app.services.supabase_client import get_supabase_client
+from app.services.supabase_client import get_supabase_client, get_supabase_admin_client
 from app.dependencies import get_current_user_id
 
 router = APIRouter()
@@ -35,7 +35,7 @@ async def create_task(
 ):
     """Create a new task."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         task_entry = {
             "user_id": user_id,
             "title": task_data.title,
@@ -66,7 +66,7 @@ async def get_tasks(
 ):
     """Get all tasks for the current user with optional filters."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         query = supabase.table("tasks").select("*").eq("user_id", user_id)
         
         if status:
@@ -86,7 +86,7 @@ async def get_tasks(
 async def get_today_tasks(user_id: str = Depends(get_current_user_id)):
     """Get all tasks scheduled for today."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         today = datetime.utcnow().strftime("%Y-%m-%d")
         
         response = supabase.table("tasks").select("*").eq("user_id", user_id).gte("scheduled_time", f"{today}T00:00:00").lte("scheduled_time", f"{today}T23:59:59").order("scheduled_time", desc=False).execute()
@@ -103,7 +103,7 @@ async def get_upcoming_tasks(
 ):
     """Get upcoming tasks for the next N days."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         today = datetime.utcnow()
         end_date = today.replace(day=today.day + days)
         
@@ -121,7 +121,7 @@ async def get_task(
 ):
     """Get a specific task."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         response = supabase.table("tasks").select("*").eq("id", task_id).eq("user_id", user_id).execute()
         
         if not response.data:
@@ -140,7 +140,7 @@ async def update_task(
 ):
     """Update a task."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         
         # Filter out None values
         update_data = {k: v for k, v in task_data.model_dump().items() if v is not None}
@@ -163,7 +163,7 @@ async def complete_task(
 ):
     """Mark a task as completed."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         
         response = supabase.table("tasks").update({
             "status": "completed",
@@ -186,7 +186,7 @@ async def miss_task(
 ):
     """Mark a task as missed."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         
         response = supabase.table("tasks").update({
             "status": "missed",
@@ -209,7 +209,7 @@ async def reschedule_task(
 ):
     """Reschedule a task to a new time."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         
         response = supabase.table("tasks").update({
             "scheduled_time": new_time,

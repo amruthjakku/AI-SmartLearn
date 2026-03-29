@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 from datetime import datetime
-from app.services.supabase_client import get_supabase_client
+from app.services.supabase_client import get_supabase_client, get_supabase_admin_client
 from app.services.ai_service import AIService
 from app.dependencies import get_current_user_id
 
@@ -14,7 +14,7 @@ class ChatMessageRequest(BaseModel):
 @router.get("/history")
 async def get_chat_history(user_id: str = Depends(get_current_user_id)):
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         response = supabase.table("chat_messages").select("*").eq("user_id", user_id).order("created_at", desc=False).execute()
         return {"history": response.data}
     except Exception as e:
@@ -26,7 +26,7 @@ async def send_message(
     user_id: str = Depends(get_current_user_id)
 ):
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         ai_service = AIService()
         
         # 1. Get user profile
@@ -109,7 +109,7 @@ async def send_message(
 @router.delete("/history")
 async def clear_history(user_id: str = Depends(get_current_user_id)):
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         supabase.table("chat_messages").delete().eq("user_id", user_id).execute()
         return {"message": "Chat history cleared"}
     except Exception as e:

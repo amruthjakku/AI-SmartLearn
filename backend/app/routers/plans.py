@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Optional, List, Any
 from datetime import datetime
-from app.services.supabase_client import get_supabase_client
+from app.services.supabase_client import get_supabase_client, get_supabase_admin_client
 from app.services.ai_service import AIService
 from app.dependencies import get_current_user_id
 
@@ -53,7 +53,7 @@ async def generate_plan(
         )
         
         # Save plan to database
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         plan_data = {
             "user_id": user_id,
             "title": f"Study Plan: {request.goal}",
@@ -100,7 +100,7 @@ async def generate_plan(
 async def get_plans(user_id: str = Depends(get_current_user_id)):
     """Get all study plans for the current user."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         response = supabase.table("study_plans").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
         return {"plans": response.data}
     except Exception as e:
@@ -114,7 +114,7 @@ async def get_plan(
 ):
     """Get a specific study plan."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         response = supabase.table("study_plans").select("*").eq("id", plan_id).eq("user_id", user_id).execute()
         
         if not response.data:
@@ -133,7 +133,7 @@ async def update_plan_status(
 ):
     """Update study plan status (active, paused, completed)."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         response = supabase.table("study_plans").update({
             "status": status,
             "updated_at": datetime.utcnow().isoformat()
@@ -154,7 +154,7 @@ async def delete_plan(
 ):
     """Delete a study plan and its associated tasks."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         
         # Delete associated tasks first
         supabase.table("tasks").delete().eq("study_plan_id", plan_id).execute()
@@ -178,7 +178,7 @@ async def adjust_plan(
 ):
     """Adjust study plan based on progress using AI."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         
         # Get current plan
         plan_response = supabase.table("study_plans").select("*").eq("id", plan_id).eq("user_id", user_id).execute()

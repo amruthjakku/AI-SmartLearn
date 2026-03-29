@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
-from app.services.supabase_client import get_supabase_client
+from app.services.supabase_client import get_supabase_client, get_supabase_admin_client
 from app.dependencies import get_current_user_id
 
 router = APIRouter()
@@ -34,7 +34,7 @@ class UserUpdate(BaseModel):
 async def get_profile(user_id: str = Depends(get_current_user_id)):
     """Get user profile."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         response = supabase.table("profiles").select("*").eq("id", user_id).execute()
         
         if not response.data:
@@ -55,7 +55,7 @@ async def update_profile(
 ):
     """Update user profile."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         
         # Filter out None values
         update_data = {k: v for k, v in profile_data.model_dump().items() if v is not None}
