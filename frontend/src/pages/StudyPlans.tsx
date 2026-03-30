@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
-import { Plus, BookOpen, Calendar, Clock, Trash2, Eye } from 'lucide-react'
+import { Plus, BookOpen, Calendar, Clock, Trash2, Eye, Loader2 } from 'lucide-react'
 import { api } from '../services/api'
 
 interface StudyPlan {
@@ -109,68 +109,76 @@ export default function StudyPlans() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Study Plans</h2>
+    <div className="space-y-8 animate-fade-in max-w-2xl mx-auto">
+      <div className="flex items-center justify-between pb-4 border-b border-base-200/50">
+        <div>
+          <h2 className="text-2xl font-bold text-base-900 tracking-tight">Study Plans</h2>
+          <p className="text-sm text-base-500 mt-1">Your personalized AI learning paths</p>
+        </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+          className="flex items-center gap-2 px-4 py-2.5 bg-base-900 text-white rounded-xl hover:bg-black transition-all active:scale-95 text-sm font-medium shadow-sm"
         >
-          <Plus size={18} />
+          <Plus size={16} />
           New Plan
         </button>
       </div>
 
       {!plans || plans.length === 0 ? (
-        <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-          <BookOpen className="mx-auto text-gray-400 mb-4" size={48} />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No study plans yet</h3>
-          <p className="text-gray-600 mb-4">Create your first AI-powered study plan</p>
+        <div className="bg-white rounded-3xl border border-base-200/60 p-12 text-center shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-400 to-primary-600 opacity-20"></div>
+          <div className="w-20 h-20 bg-base-50 rounded-full flex items-center justify-center mx-auto mb-6 text-base-300">
+            <BookOpen size={40} className="transform -rotate-6" />
+          </div>
+          <h3 className="text-xl font-semibold text-base-900 mb-2 tracking-tight">No learning paths yet</h3>
+          <p className="text-base-500 mb-8 max-w-sm mx-auto">Let SmartBud create a perfectly optimized learning journey based on your goals and schedule.</p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-base-200 text-base-900 rounded-xl hover:bg-base-50 transition-all font-medium shadow-sm"
           >
             <Plus size={18} />
-            Create Plan
+            Generate First Plan
           </button>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className="bg-white rounded-lg border border-gray-200 p-4"
+              className="group bg-white rounded-2xl border border-base-200/60 p-5 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden"
             >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">{plan.goal}</h3>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                    <span className="flex items-center gap-1">
-                      <Calendar size={14} />
-                      {new Date(plan.target_date).toLocaleDateString()}
-                    </span>
-                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                      plan.status === 'active' ? 'bg-green-100 text-green-700' :
-                      plan.status === 'completed' ? 'bg-blue-100 text-blue-700' :
-                      'bg-gray-100 text-gray-700'
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-400 to-primary-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="flex flex-col h-full justify-between gap-4">
+                <div>
+                  <div className="flex justify-between items-start mb-2">
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
+                      plan.status === 'active' ? 'bg-primary-50 text-primary-700' :
+                      plan.status === 'completed' ? 'bg-emerald-50 text-emerald-700' :
+                      'bg-base-100 text-base-600'
                     }`}>
                       {plan.status}
                     </span>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => handleViewPlan(plan.id)}
+                        className="p-1.5 text-base-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                      >
+                        <Eye size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeletePlan(plan.id)}
+                        className="p-1.5 text-base-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
+                  <h3 className="font-semibold text-base-900 text-lg leading-tight mt-3">{plan.goal}</h3>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleViewPlan(plan.id)}
-                    className="p-2 text-gray-500 hover:bg-gray-50 rounded-full"
-                  >
-                    <Eye size={18} />
-                  </button>
-                  <button
-                    onClick={() => handleDeletePlan(plan.id)}
-                    className="p-2 text-red-500 hover:bg-red-50 rounded-full"
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                
+                <div className="flex items-center gap-2 text-xs font-medium text-base-500 bg-base-50 px-3 py-2 rounded-xl mt-2 w-fit">
+                  <Calendar size={14} className="text-base-400" />
+                  Target: {new Date(plan.target_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                 </div>
               </div>
             </div>
@@ -180,124 +188,146 @@ export default function StudyPlans() {
 
       {/* Create Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div className="p-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold">Create Study Plan</h3>
-              <p className="text-sm text-gray-600">AI will generate a personalized plan for you</p>
+        <div className="fixed inset-0 bg-base-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl animate-slide-up hide-scrollbar">
+            <div className="p-6 border-b border-base-200/50 sticky top-0 bg-white/90 backdrop-blur-md z-10 flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-bold tracking-tight text-base-900">Craft Learning Path</h3>
+                <p className="text-sm text-base-500 mt-0.5">Tell SmartBud what you want to achieve</p>
+              </div>
+              <button 
+                onClick={() => setShowCreateModal(false)}
+                className="w-8 h-8 flex items-center justify-center bg-base-100 text-base-500 rounded-full hover:bg-base-200 transition-colors"
+              >
+                ✕
+              </button>
             </div>
 
-            <form onSubmit={handleCreatePlan} className="p-4 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Learning Goal *
-                </label>
-                <input
-                  type="text"
-                  value={formData.goal}
-                  onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="e.g., Learn Python programming"
-                />
+            <form onSubmit={handleCreatePlan} className="p-6 space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[13px] font-semibold text-base-700 mb-1.5 uppercase tracking-wide">
+                    The Goal *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.goal}
+                    onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
+                    required
+                    className="w-full px-4 py-3 bg-base-50 border border-base-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-base-900 focus:border-transparent transition-all placeholder:text-base-400 text-base-900 text-[15px]"
+                    placeholder="e.g., Master React Fundamentals"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[13px] font-semibold text-base-700 mb-1.5 uppercase tracking-wide">
+                      Deadline *
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.target_date}
+                      onChange={(e) => setFormData({ ...formData, target_date: e.target.value })}
+                      required
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full px-4 py-3 bg-base-50 border border-base-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-base-900 focus:border-transparent transition-all text-base-900 text-[15px]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[13px] font-semibold text-base-700 mb-1.5 uppercase tracking-wide">
+                      Daily Time (min)
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.daily_available_time}
+                      onChange={(e) => setFormData({ ...formData, daily_available_time: parseInt(e.target.value) })}
+                      min={15}
+                      max={480}
+                      className="w-full px-4 py-3 bg-base-50 border border-base-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-base-900 focus:border-transparent transition-all text-base-900 text-[15px]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[13px] font-semibold text-base-700 mb-1.5 uppercase tracking-wide">
+                    Skill Level
+                  </label>
+                  <select
+                    value={formData.skill_level}
+                    onChange={(e) => setFormData({ ...formData, skill_level: e.target.value })}
+                    className="w-full px-4 py-3 bg-base-50 border border-base-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-base-900 focus:border-transparent transition-all text-base-900 text-[15px] appearance-none"
+                  >
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[13px] font-semibold text-base-700 mb-1.5 uppercase tracking-wide text-green-700">
+                    Strengths
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.strengths}
+                    onChange={(e) => setFormData({ ...formData, strengths: e.target.value })}
+                    className="w-full px-4 py-3 bg-base-50 border border-base-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all placeholder:text-base-400 text-base-900 text-[15px]"
+                    placeholder="e.g., math, visuals (comma separated)"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[13px] font-semibold text-base-700 mb-1.5 uppercase tracking-wide text-orange-700">
+                    Weaknesses
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.weaknesses}
+                    onChange={(e) => setFormData({ ...formData, weaknesses: e.target.value })}
+                    className="w-full px-4 py-3 bg-base-50 border border-base-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all placeholder:text-base-400 text-base-900 text-[15px]"
+                    placeholder="e.g., reading long text, theory"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[13px] font-semibold text-base-700 mb-1.5 uppercase tracking-wide">
+                    Extra Notes
+                  </label>
+                  <textarea
+                    value={formData.additional_notes}
+                    onChange={(e) => setFormData({ ...formData, additional_notes: e.target.value })}
+                    className="w-full px-4 py-3 bg-base-50 border border-base-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-base-900 focus:border-transparent transition-all placeholder:text-base-400 text-base-900 text-[15px] resize-none"
+                    rows={3}
+                    placeholder="Any specific tools or formats?"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Target Date *
-                </label>
-                <input
-                  type="date"
-                  value={formData.target_date}
-                  onChange={(e) => setFormData({ ...formData, target_date: e.target.value })}
-                  required
-                  min={new Date().toISOString().split('T')[0]}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Daily Available Time (minutes)
-                </label>
-                <input
-                  type="number"
-                  value={formData.daily_available_time}
-                  onChange={(e) => setFormData({ ...formData, daily_available_time: parseInt(e.target.value) })}
-                  min={15}
-                  max={480}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Skill Level
-                </label>
-                <select
-                  value={formData.skill_level}
-                  onChange={(e) => setFormData({ ...formData, skill_level: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                >
-                  <option value="beginner">Beginner</option>
-                  <option value="intermediate">Intermediate</option>
-                  <option value="advanced">Advanced</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Strengths (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  value={formData.strengths}
-                  onChange={(e) => setFormData({ ...formData, strengths: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="e.g., good at math, quick learner"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Weaknesses (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  value={formData.weaknesses}
-                  onChange={(e) => setFormData({ ...formData, weaknesses: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="e.g., struggles with theory"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Additional Notes
-                </label>
-                <textarea
-                  value={formData.additional_notes}
-                  onChange={(e) => setFormData({ ...formData, additional_notes: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  rows={3}
-                  placeholder="Any other preferences or requirements..."
-                />
-              </div>
-
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-6 border-t border-base-200/50">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="flex-1 py-2 px-4 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                  className="flex-1 py-3.5 px-4 bg-white border border-base-200 text-base-700 font-medium rounded-xl hover:bg-base-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={creating}
-                  className="flex-1 py-2 px-4 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
+                  className="flex-1 py-3.5 px-4 bg-base-900 text-white font-medium rounded-xl hover:bg-black transition-colors disabled:opacity-50 flex justify-center items-center gap-2 relative overflow-hidden group"
                 >
-                  {creating ? 'Creating...' : 'Create Plan'}
+                  {creating ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Designing...
+                    </>
+                  ) : (
+                    <>
+                      <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-primary-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <span className="relative z-10">Generate Plan with AI</span>
+                      <span className="relative z-10">✨</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>
@@ -307,35 +337,52 @@ export default function StudyPlans() {
 
       {/* View Plan Modal */}
       {selectedPlan && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div className="p-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold">{selectedPlan.goal}</h3>
-              <p className="text-sm text-gray-600">AI-Generated Study Plan</p>
+        <div className="fixed inset-0 bg-base-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl animate-slide-up hide-scrollbar relative">
+            <div className="sticky top-0 bg-white/90 backdrop-blur-md z-10 p-6 border-b border-base-200/50">
+              <div className="flex justify-between items-start gap-4">
+                <div>
+                  <div className="text-[10px] font-bold tracking-widest text-primary-600 uppercase mb-2 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 bg-primary-500 rounded-full animate-pulse"></span>
+                    AI Learning Path
+                  </div>
+                  <h3 className="text-2xl font-bold tracking-tight text-base-900 leading-tight">{selectedPlan.goal}</h3>
+                </div>
+                <button 
+                  onClick={() => setSelectedPlan(null)}
+                  className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-base-100 text-base-500 rounded-full hover:bg-base-200 transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
 
-            <div className="p-4">
+            <div className="p-6 pb-24">
               <div className="space-y-4">
                 {selectedPlan.tasks?.map((task: any, index: number) => (
-                  <div key={index} className="bg-gray-50 rounded-lg p-3">
-                    <h4 className="font-medium text-gray-900">{task.title}</h4>
-                    <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-                    <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-                      <span className="flex items-center gap-1">
-                        <Clock size={12} />
-                        {task.duration_minutes} min
+                  <div key={index} className="bg-base-50 rounded-2xl p-4 border border-base-200/40 hover:border-base-300 transition-colors">
+                    <div className="flex justify-between items-start mb-2 gap-4">
+                      <h4 className="font-semibold text-base-900 leading-snug">{task.title}</h4>
+                      <span className="flex-shrink-0 px-2.5 py-1 bg-white border border-base-200 rounded-md text-[10px] font-bold text-base-500 uppercase">
+                        Day {task.day_number}
                       </span>
-                      <span>Day {task.day_number}</span>
+                    </div>
+                    <p className="text-[13px] text-base-600 leading-relaxed">{task.description}</p>
+                    <div className="flex items-center gap-1.5 mt-4 text-[11px] font-semibold text-base-500 uppercase tracking-wide">
+                      <Clock size={12} className="text-primary-500" />
+                      {task.duration_minutes} Minutes
                     </div>
                   </div>
                 ))}
               </div>
-
+            </div>
+            
+            <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-white via-white to-transparent pt-12">
               <button
                 onClick={() => setSelectedPlan(null)}
-                className="w-full mt-4 py-2 px-4 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+                className="w-full py-3.5 px-4 bg-base-900 text-white font-medium rounded-xl hover:bg-black transition-colors shadow-sm"
               >
-                Close
+                Close View
               </button>
             </div>
           </div>

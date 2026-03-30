@@ -20,49 +20,60 @@ export default function Layout({ children }: LayoutProps) {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-3 safe-area-top">
-        <div className="flex items-center justify-between max-w-lg mx-auto">
-          <h1 className="text-xl font-bold text-primary-600">AI-SmartLearn</h1>
+    <div className="min-h-screen bg-base-50 flex flex-col font-sans">
+      {/* Floating Glass Header */}
+      <header className="fixed top-0 w-full z-50 glass border-b border-base-200/50 safe-area-top">
+        <div className="flex items-center justify-between max-w-lg mx-auto px-4 py-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-600 to-primary-400 flex items-center justify-center shadow-glow">
+              <span className="text-white font-bold text-lg leading-none">A</span>
+            </div>
+            <h1 className="text-xl font-bold text-base-900 tracking-tight">SmartLearn</h1>
+          </div>
           <button
             onClick={signOut}
-            className="p-2 text-gray-500 hover:text-gray-700 rounded-full"
+            className="p-2 text-base-500 hover:text-base-900 hover:bg-base-100 rounded-full transition-all duration-300 active:scale-95"
           >
             <LogOut size={20} />
           </button>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto pb-20">
-        <div className="max-w-lg mx-auto px-4 py-4">
+      {/* Main Content (padded to account for fixed header and footer) */}
+      <main className="flex-1 overflow-y-auto pt-20 pb-32 hide-scrollbar">
+        <div className="max-w-lg mx-auto px-4 h-full">
           {children}
         </div>
       </main>
 
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-area-bottom">
-        <div className="max-w-lg mx-auto flex justify-around items-center h-16">
-          {navItems.map((item) => {
-            const Icon = item.icon
-            const isActive = location.pathname === item.path
-            
-            return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                className={`flex flex-col items-center justify-center w-full h-full ${
-                  isActive ? 'text-primary-600' : 'text-gray-500'
-                }`}
-              >
-                <Icon size={24} />
-                <span className="text-xs mt-1">{item.label}</span>
-              </NavLink>
-            )
-          })}
-        </div>
-      </nav>
+      {/* Floating Pill Bottom Navigation */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-32px)] max-w-lg z-50 safe-area-bottom">
+        <nav className="glass rounded-2xl border border-white/60 shadow-float px-2 py-2">
+          <div className="flex justify-between items-center">
+            {navItems.map((item) => {
+              const Icon = item.icon
+              const isActive = location.pathname === item.path
+              
+              return (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  className={`relative flex flex-col items-center justify-center w-16 h-14 rounded-xl transition-all duration-300 ${
+                    isActive 
+                      ? 'text-primary-600 bg-primary-50/80 shadow-sm' 
+                      : 'text-base-400 hover:text-base-700 hover:bg-base-50/50'
+                  }`}
+                >
+                  <Icon size={22} className={`transition-transform duration-300 ${isActive ? 'scale-110 mb-0.5' : ''}`} />
+                  <span className={`text-[10px] font-medium transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 h-0 w-0 absolute'}`}>
+                    {item.label}
+                  </span>
+                </NavLink>
+              )
+            })}
+          </div>
+        </nav>
+      </div>
     </div>
   )
-}
+}

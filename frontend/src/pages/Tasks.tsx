@@ -112,27 +112,30 @@ export default function Tasks() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Tasks</h2>
+    <div className="space-y-8 animate-fade-in max-w-2xl mx-auto">
+      <div className="flex items-center justify-between pb-4 border-b border-base-200/50">
+        <div>
+          <h2 className="text-2xl font-bold text-base-900 tracking-tight">Tasks</h2>
+          <p className="text-sm text-base-500 mt-1">Manage your daily learning objectives</p>
+        </div>
         <button
           onClick={loadTasks}
-          className="p-2 text-gray-500 hover:bg-gray-100 rounded-full"
+          className="p-2.5 text-base-500 hover:text-base-900 hover:bg-base-100 rounded-xl transition-all active:scale-95 border border-transparent hover:border-base-200"
         >
           <RefreshCw size={18} />
         </button>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-2">
+      <div className="flex gap-2 overflow-x-auto pb-4 hide-scrollbar">
         {(['all', 'pending', 'completed', 'missed'] as const).map((status) => (
           <button
             key={status}
             onClick={() => setFilter(status)}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+            className={`px-5 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-300 ${
               filter === status
-                ? 'bg-primary-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-base-900 text-white shadow-md'
+                : 'bg-white text-base-600 border border-base-200/60 hover:border-base-300 hover:bg-base-50'
             }`}
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -142,63 +145,91 @@ export default function Tasks() {
 
       {/* Tasks List */}
       {tasks.length === 0 ? (
-        <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-          <Clock className="mx-auto text-gray-400 mb-4" size={48} />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No tasks found</h3>
-          <p className="text-gray-600">
+        <div className="bg-white rounded-3xl border border-base-200/60 p-12 text-center shadow-sm relative overflow-hidden mt-4">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-base-200 to-base-300 opacity-50"></div>
+          <div className="w-20 h-20 bg-base-50 rounded-full flex items-center justify-center mx-auto mb-6 text-base-300">
+            <Clock size={40} className="opacity-80" />
+          </div>
+          <h3 className="text-xl font-semibold text-base-900 mb-2 tracking-tight">No tasks found</h3>
+          <p className="text-base-500 max-w-sm mx-auto">
             {filter === 'all' 
-              ? 'Create a study plan to generate tasks'
-              : `No ${filter} tasks`}
+              ? 'Create a study plan to generate your personalized daily tasks.'
+              : `You don't have any ${filter} tasks right now.`}
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {tasks.map((task) => (
             <div
               key={task.id}
-              className="bg-white rounded-lg border border-gray-200 p-4"
+              className={`group bg-white rounded-2xl border border-base-200/60 p-5 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden ${
+                task.status === 'completed' ? 'opacity-70 grayscale-[20%]' : ''
+              }`}
             >
-              <div className="flex items-start gap-3">
-                <div className="mt-1">
+              {task.status === 'completed' && (
+                <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+              )}
+              {task.status === 'missed' && (
+                <div className="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+              )}
+              {task.status === 'pending' && (
+                <div className="absolute top-0 left-0 w-1 h-full bg-primary-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              )}
+              
+              <div className="flex items-start gap-4">
+                <div className={`mt-0.5 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                   task.status === 'completed' ? 'bg-emerald-50 text-emerald-500' :
+                   task.status === 'missed' ? 'bg-red-50 text-red-500' :
+                   'bg-base-50 text-primary-500'
+                }`}>
                   {getStatusIcon(task.status)}
                 </div>
+                
                 <div className="flex-1 min-w-0">
-                  <h3 className={`font-medium ${
-                    task.status === 'completed' ? 'text-gray-400 line-through' : 'text-gray-900'
+                  <h3 className={`font-semibold text-[17px] leading-tight mb-1.5 ${
+                    task.status === 'completed' ? 'text-base-400 line-through' : 'text-base-900'
                   }`}>
                     {task.title}
                   </h3>
                   {task.description && (
-                    <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+                    <p className="text-[13px] text-base-500 leading-relaxed mb-3">{task.description}</p>
                   )}
-                  <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                    <span className="flex items-center gap-1">
-                      <Calendar size={14} />
+                  
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-base-50 rounded-lg text-xs font-medium text-base-500">
+                      <Calendar size={12} className="text-base-400" />
                       {formatDate(task.scheduled_time)}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock size={14} />
+                    </div>
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-base-50 rounded-lg text-xs font-medium text-base-500">
+                      <Clock size={12} className="text-base-400" />
                       {formatTime(task.scheduled_time)}
+                    </div>
+                    <span className="px-2.5 py-1 bg-base-50 rounded-lg text-[11px] font-bold text-base-500 uppercase tracking-wide">
+                      {task.duration_minutes} min
                     </span>
-                    <span>{task.duration_minutes} min</span>
-                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${getPriorityColor(task.priority)}`}>
+                    <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wide border ${
+                      task.priority === 'high' ? 'bg-orange-50 text-orange-700 border-orange-100' :
+                      task.priority === 'medium' ? 'bg-yellow-50 text-yellow-700 border-yellow-100' :
+                      'bg-green-50 text-green-700 border-green-100'
+                    }`}>
                       {task.priority}
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-1">
+                
+                <div className="flex flex-col sm:flex-row items-center gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                   {task.status === 'pending' && (
                     <>
                       <button
                         onClick={() => handleCompleteTask(task.id)}
-                        className="p-2 text-green-600 hover:bg-green-50 rounded-full"
+                        className="p-2.5 bg-white border border-base-200 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 rounded-xl transition-all shadow-sm"
                         title="Mark as complete"
                       >
                         <CheckCircle size={18} />
                       </button>
                       <button
                         onClick={() => handleMissTask(task.id)}
-                        className="p-2 text-orange-600 hover:bg-orange-50 rounded-full"
+                        className="p-2.5 bg-white border border-base-200 text-orange-600 hover:bg-orange-50 hover:border-orange-200 rounded-xl transition-all shadow-sm"
                         title="Mark as missed"
                       >
                         <AlertCircle size={18} />
@@ -207,7 +238,7 @@ export default function Tasks() {
                   )}
                   <button
                     onClick={() => handleDeleteTask(task.id)}
-                    className="p-2 text-red-500 hover:bg-red-50 rounded-full"
+                    className="p-2.5 bg-white border border-base-200 text-base-400 hover:text-red-600 hover:bg-red-50 hover:border-red-200 rounded-xl transition-all shadow-sm"
                     title="Delete task"
                   >
                     <Trash2 size={18} />
