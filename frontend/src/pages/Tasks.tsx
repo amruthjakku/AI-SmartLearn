@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
-import { CheckCircle, Clock, Calendar, AlertCircle, RefreshCw, Trash2 } from 'lucide-react'
+import { CheckCircle, Clock, Calendar, AlertCircle, RefreshCw, Trash2, Loader2 } from 'lucide-react'
 import { api } from '../services/api'
 
 interface Task {
@@ -87,13 +87,6 @@ export default function Tasks() {
     return date.toLocaleDateString()
   }
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-700'
-      case 'medium': return 'bg-yellow-100 text-yellow-700'
-      default: return 'bg-gray-100 text-gray-700'
-    }
-  }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -105,8 +98,10 @@ export default function Tasks() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+      <div className="flex flex-col items-center justify-center min-h-[50vh] animate-fade-in">
+        <div className="w-12 h-12 rounded-2xl bg-base-100 flex items-center justify-center animate-pulse">
+          <Loader2 className="animate-spin text-base-400" size={24} />
+        </div>
       </div>
     )
   }

@@ -88,8 +88,10 @@ export default function Chat() {
 
   if (initialLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-full">
-        <Loader2 className="animate-spin text-base-300" size={32} />
+      <div className="flex flex-col items-center justify-center h-full animate-fade-in">
+        <div className="w-12 h-12 rounded-2xl bg-base-100 flex items-center justify-center animate-pulse">
+          <Loader2 className="animate-spin text-base-400" size={24} />
+        </div>
       </div>
     )
   }
