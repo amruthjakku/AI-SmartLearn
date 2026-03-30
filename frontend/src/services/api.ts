@@ -94,7 +94,7 @@ class ApiService {
   }
 
   async getPlans() {
-    return this.request<{ plans: any[] }>('/plans')
+    return this.request<{ plans: any[] }>('/plans/')
   }
 
   async getPlan(planId: string) {
@@ -129,7 +129,7 @@ class ApiService {
     priority: string
     study_plan_id?: string
   }) {
-    return this.request<{ message: string; task: any }>('/tasks', {
+    return this.request<{ message: string; task: any }>('/tasks/', {
       method: 'POST',
       body: data,
     })
@@ -142,7 +142,7 @@ class ApiService {
     if (params?.date) query.set('date', params.date)
     
     const queryString = query.toString()
-    return this.request<{ tasks: any[] }>(`/tasks${queryString ? `?${queryString}` : ''}`)
+    return this.request<{ tasks: any[] }>(`/tasks/${queryString ? `?${queryString}` : ''}`)
   }
 
   async getTodayTasks() {
