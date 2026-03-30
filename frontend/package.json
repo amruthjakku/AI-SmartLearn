@@ -16,14 +16,15 @@
     "@capacitor/core": "^6.0.0",
     "@capacitor/push-notifications": "^6.0.0",
     "@supabase/supabase-js": "^2.39.0",
+    "date-fns": "^3.0.0",
+    "lucide-react": "^0.303.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.21.0",
-    "lucide-react": "^0.303.0",
-    "date-fns": "^3.0.0",
-    "react-hot-toast": "^2.4.1"
+    "react-hot-toast": "^2.4.1",
+    "react-router-dom": "^6.21.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.3.0",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",
