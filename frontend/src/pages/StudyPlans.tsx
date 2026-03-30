@@ -5,8 +5,8 @@ import { api } from '../services/api'
 
 interface StudyPlan {
   id: string
-  goal: string
-  target_date: string
+  title: string
+  description: string
   status: string
   created_at: string
 }
@@ -175,12 +175,12 @@ export default function StudyPlans() {
                       </button>
                     </div>
                   </div>
-                  <h3 className="font-semibold text-base-900 text-lg leading-tight mt-3">{plan.goal}</h3>
+                  <h3 className="font-semibold text-base-900 text-lg leading-tight mt-3">{plan.title}</h3>
                 </div>
                 
                 <div className="flex items-center gap-2 text-xs font-medium text-base-500 bg-base-50 px-3 py-2 rounded-xl mt-2 w-fit">
                   <Calendar size={14} className="text-base-400" />
-                  Target: {new Date(plan.target_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                  {plan.description}
                 </div>
               </div>
             </div>
@@ -348,7 +348,7 @@ export default function StudyPlans() {
                     <span className="w-1.5 h-1.5 bg-primary-500 rounded-full animate-pulse"></span>
                     AI Learning Path
                   </div>
-                  <h3 className="text-2xl font-bold tracking-tight text-base-900 leading-tight">{selectedPlan.goal}</h3>
+                  <h3 className="text-2xl font-bold tracking-tight text-base-900 leading-tight">{selectedPlan.title}</h3>
                 </div>
                 <button 
                   onClick={() => setSelectedPlan(null)}

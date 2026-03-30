@@ -75,7 +75,7 @@ async def update_profile(
 async def get_user_stats(user_id: str = Depends(get_current_user_id)):
     """Get user statistics."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         
         # Get task completion stats
         tasks_response = supabase.table("tasks").select("status").eq("user_id", user_id).execute()

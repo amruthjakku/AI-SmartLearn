@@ -89,7 +89,8 @@ async def get_today_tasks(user_id: str = Depends(get_current_user_id)):
         supabase = get_supabase_admin_client()
         today = datetime.utcnow().strftime("%Y-%m-%d")
         
-        response = supabase.table("tasks").select("*").eq("user_id", user_id).gte("scheduled_time", f"{today}T00:00:00").lte("scheduled_time", f"{today}T23:59:59").order("scheduled_time", desc=False).execute()
+        # Use simple date string comparison if possible, or cast to date in the query
+        response = supabase.table("tasks").select("*").eq("user_id", user_id).ilike("scheduled_time", f"{today}%").order("scheduled_time", desc=False).execute()
         
         return {"tasks": response.data or [], "date": today}
     except Exception as e:
@@ -232,7 +233,7 @@ async def delete_task(
 ):
     """Delete a task."""
     try:
-        supabase = get_supabase_client()
+        supabase = get_supabase_admin_client()
         
         response = supabase.table("tasks").delete().eq("id", task_id).eq("user_id", user_id).execute()
         
