@@ -47,7 +47,8 @@ htmlcov/
 # Mobile
 frontend/android/
 frontend/ios/
-frontend/public/
+# # frontend/public/  <-- REMOVED TO ALLOW LOGO 
+
 
 # Build
 frontend/dist/
