@@ -29,7 +29,7 @@ export default function Chat() {
   const loadHistory = async () => {
     try {
       const { history } = await api.getChatHistory()
-      setMessages(history)
+      setMessages(history || [])
     } catch (error) {
       console.error('Failed to load chat history:', error)
     } finally {

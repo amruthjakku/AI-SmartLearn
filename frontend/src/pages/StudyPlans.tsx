@@ -35,7 +35,7 @@ export default function StudyPlans() {
   const loadPlans = async () => {
     try {
       const response = await api.getPlans()
-      setPlans(response.plans)
+      setPlans(response.plans || [])
     } catch (error) {
       console.error('Failed to load plans:', error)
     } finally {

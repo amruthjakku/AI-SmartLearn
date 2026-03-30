@@ -37,7 +37,7 @@ export default function Dashboard() {
         api.getTodayTasks(),
         api.getUserStats()
       ])
-      setTodayTasks(tasksRes.tasks)
+      setTodayTasks(tasksRes.tasks || [])
       setStats(statsRes)
     } catch (error) {
       console.error('Failed to load dashboard data:', error)

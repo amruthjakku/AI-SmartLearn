@@ -8,6 +8,7 @@ import StudyPlans from './pages/StudyPlans'
 import Tasks from './pages/Tasks'
 import Profile from './pages/Profile'
 import { Toaster } from 'react-hot-toast'
+import { Loader2 } from 'lucide-react'
 import Layout from './components/Layout'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -15,8 +16,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-base-50 animate-fade-in">
+        <div className="w-16 h-16 rounded-3xl bg-white border border-base-200/60 shadow-glass flex items-center justify-center animate-pulse">
+          <Loader2 className="animate-spin text-base-400" size={32} />
+        </div>
       </div>
     )
   }
@@ -33,8 +36,10 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-base-50 animate-fade-in">
+        <div className="w-16 h-16 rounded-3xl bg-white border border-base-200/60 shadow-glass flex items-center justify-center animate-pulse">
+          <Loader2 className="animate-spin text-base-400" size={32} />
+        </div>
       </div>
     )
   }

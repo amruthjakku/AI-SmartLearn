@@ -28,7 +28,7 @@ export default function Tasks() {
       setLoading(true)
       const params = filter !== 'all' ? { status: filter } : undefined
       const response = await api.getTasks(params)
-      setTasks(response.tasks)
+      setTasks(response.tasks || [])
     } catch (error) {
       console.error('Failed to load tasks:', error)
     } finally {
