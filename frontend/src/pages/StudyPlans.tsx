@@ -121,7 +121,7 @@ export default function StudyPlans() {
         </button>
       </div>
 
-      {plans.length === 0 ? (
+      {!plans || plans.length === 0 ? (
         <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
           <BookOpen className="mx-auto text-gray-400 mb-4" size={48} />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No study plans yet</h3>

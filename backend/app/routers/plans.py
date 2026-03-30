@@ -102,7 +102,7 @@ async def get_plans(user_id: str = Depends(get_current_user_id)):
     try:
         supabase = get_supabase_admin_client()
         response = supabase.table("study_plans").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
-        return {"plans": response.data}
+        return {"plans": response.data or []}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

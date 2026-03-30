@@ -77,7 +77,7 @@ async def get_tasks(
             query = query.gte("scheduled_time", f"{date}T00:00:00").lte("scheduled_time", f"{date}T23:59:59")
         
         response = query.order("scheduled_time", desc=False).execute()
-        return {"tasks": response.data}
+        return {"tasks": response.data or []}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -91,7 +91,7 @@ async def get_today_tasks(user_id: str = Depends(get_current_user_id)):
         
         response = supabase.table("tasks").select("*").eq("user_id", user_id).gte("scheduled_time", f"{today}T00:00:00").lte("scheduled_time", f"{today}T23:59:59").order("scheduled_time", desc=False).execute()
         
-        return {"tasks": response.data, "date": today}
+        return {"tasks": response.data or [], "date": today}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -109,7 +109,7 @@ async def get_upcoming_tasks(
         
         response = supabase.table("tasks").select("*").eq("user_id", user_id).eq("status", "pending").gte("scheduled_time", today.isoformat()).lte("scheduled_time", end_date.isoformat()).order("scheduled_time", desc=False).execute()
         
-        return {"tasks": response.data}
+        return {"tasks": response.data or []}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

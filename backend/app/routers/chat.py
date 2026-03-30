@@ -16,7 +16,7 @@ async def get_chat_history(user_id: str = Depends(get_current_user_id)):
     try:
         supabase = get_supabase_admin_client()
         response = supabase.table("chat_messages").select("*").eq("user_id", user_id).order("created_at", desc=False).execute()
-        return {"history": response.data}
+        return {"history": response.data or []}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
