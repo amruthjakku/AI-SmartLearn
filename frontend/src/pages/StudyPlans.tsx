@@ -325,7 +325,7 @@ export default function StudyPlans() {
                     </>
                   ) : (
                     <>
-                      <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-primary-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-primary-600 to-primary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       <span className="relative z-10">Generate Plan with AI</span>
                       <span className="relative z-10">✨</span>
                     </>

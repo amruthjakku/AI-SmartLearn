@@ -25,8 +25,8 @@ export default function Layout({ children }: LayoutProps) {
       <header className="fixed top-0 w-full z-50 glass border-b border-base-200/50 safe-area-top">
         <div className="flex items-center justify-between max-w-lg mx-auto px-4 py-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-600 to-primary-400 flex items-center justify-center shadow-glow">
-              <span className="text-white font-bold text-lg leading-none">A</span>
+            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-glow flex-shrink-0">
+              <img src="/logo.jpeg" alt="SmartLearn Logo" className="w-full h-full object-cover" />
             </div>
             <h1 className="text-xl font-bold text-base-900 tracking-tight">SmartLearn</h1>
           </div>
