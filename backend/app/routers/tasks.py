@@ -74,7 +74,7 @@ async def get_tasks(
         if priority:
             query = query.eq("priority", priority)
         if date:
-            query = query.gte("scheduled_time", f"{date}T00:00:00").lte("scheduled_time", f"{date}T23:59:59")
+            query = query.gte("scheduled_time", f"{date}T00:00:00Z").lte("scheduled_time", f"{date}T23:59:59Z")
         
         response = query.order("scheduled_time", desc=False).execute()
         return {"tasks": response.data or []}
@@ -89,8 +89,8 @@ async def get_today_tasks(user_id: str = Depends(get_current_user_id)):
         supabase = get_supabase_admin_client()
         today = datetime.utcnow().strftime("%Y-%m-%d")
         
-        # Use simple date string comparison if possible, or cast to date in the query
-        response = supabase.table("tasks").select("*").eq("user_id", user_id).ilike("scheduled_time", f"{today}%").order("scheduled_time", desc=False).execute()
+        # Proper date range comparison for timestamp with time zone
+        response = supabase.table("tasks").select("*").eq("user_id", user_id).gte("scheduled_time", f"{today}T00:00:00Z").lte("scheduled_time", f"{today}T23:59:59Z").order("scheduled_time", desc=False).execute()
         
         return {"tasks": response.data or [], "date": today}
     except Exception as e:
